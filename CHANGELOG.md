@@ -11,6 +11,11 @@ require the RageKit minor version they were written for, e.g. `"ragekit/ragekit"
 
 ## [Unreleased]
 
+### Changed
+
+- **Slint 1.19.0** (was 1.18.1): run `ragekit setup` once. Templates behave as before: RageKit
+  doesn't opt into Slint's 1.19 edition yet, so its layout changes don't apply.
+
 ## [0.8.1] - 2026-10-29
 
 Layout fixes found while building the dev-null.sh client, and a whole redraw on Windows after a

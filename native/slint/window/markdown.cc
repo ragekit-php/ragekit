@@ -269,9 +269,8 @@ void click(slint::Window &window, float x, float y)
 
 slint::StyledText markdown(std::string_view text)
 {
-    slint::SharedString shared(text);
     if (plain(text)) {
-        return slint::private_api::string_to_styled_text(shared);
+        return slint::StyledText::from_plain_text(text);
     }
     std::string prepared = prepare(text);
     return slint::private_api::parse_markdown(slint::SharedString(prepared), {});

@@ -12,7 +12,7 @@ What ends up in, or next to, an executable RageKit builds:
 | Software | Used for | License |
 |---|---|---|
 | RageKit | its runtime: the core classes (`App`, `Screen`, …), the generated glue, the bridge library and the host | GPLv3 (see below) |
-| [Slint](https://slint.dev) 1.18.1 | draws the UI (`libslint_cpp` next to the executable) | GPLv3 (how RageKit uses it); Slint also offers a Royalty-free and a commercial license |
+| [Slint](https://slint.dev) 1.19.0 | draws the UI (`libslint_cpp` next to the executable) | GPLv3 (how RageKit uses it); Slint also offers a Royalty-free and a commercial license |
 | [PHPX](https://github.com/swoole/phpx) | the runtime layer TypePHP's generated C++ uses | Apache-2.0 |
 | [PHP](https://www.php.net) | PHP's engine and standard library in normal builds (on Linux your system's `libphp` next to the executable, or a private PHP linked statically; DLLs on Windows) | PHP License 3.01 |
 | [GMP](https://gmplib.org), [MPFR](https://www.mpfr.org) | big-number support PHPX uses (system libraries, linked dynamically in normal builds) | LGPLv3+ (GMP also GPLv2+) |

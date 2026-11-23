@@ -43,7 +43,7 @@ sleep 0.5
 n=0
 shot() { n=$((n + 1)); import -window "$window" "$tmp/$n.png"; }
 # The message area (between the header and the message box), left of the scrollbar.
-moved() { python3 -I "$root/tests/e2e/xshift.py" "$tmp/$((n - 1)).png" "$tmp/$n.png" 0,60,440,280; }
+moved() { python3 -I "$root/tests/e2e/xshift.py" "$tmp/$((n - 1)).png" "$tmp/$n.png" 0,60,440,280 ${VIRTUAL:+near}; }
 receive() { python3 -I "$root/tests/e2e/xclick.py" 59,33; sleep 0.4; }
 wheel() { python3 -I "$root/tests/e2e/xscroll.py" 200,200 "$1" "$2"; sleep 0.4; }
 # Whether the message count (right of the button, whose hover comes and goes) changed between the last two shots.
