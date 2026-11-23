@@ -11,21 +11,40 @@ require the RageKit minor version they were written for, e.g. `"ragekit/ragekit"
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-23
+
+Updated dependencies and faster builds: Slint 1.19.0, TypePHP 0.10.1, and RageKit's own C++
+compiled file by file, several at once, so `ccache` can reuse it (CI takes about half as long).
+Templates lay out as in 0.8. To update: `composer require ragekit/ragekit:^0.9`, then
+`ragekit setup` once. Apps only need changes if a class declares one of the method names TypePHP
+0.10 reserves (see "Changed"). Tested on Linux (Xvfb); not yet checked on Windows: the new
+Windows downloads are pinned and their checksums verified, but no build ran there.
+
 ### Changed
 
-- **Slint 1.19.0** (was 1.18.1): run `ragekit setup` once. Templates behave as before: RageKit
-  doesn't opt into Slint's 1.19 edition yet, so its layout changes don't apply.
-- **TypePHP 0.10.1** (was 0.9.5), with phpx 2.9.8: run `ragekit setup` once. TypePHP 0.10 reserves
-  the method names `toStream`, `toBigInt`, `toBigFloat`, `toDecimal`, `toObject`, `toStdList` and
-  `toStdDict`, and `toInt`, `toFloat`, `toString`, `toBool` and `toArray` must have the keyword's
-  signature (public, no parameters, returning that type). An app class declaring one otherwise no
-  longer compiles: rename the method.
+- **Slint 1.19.0** (was 1.18.1). Templates behave as before: RageKit doesn't opt into Slint's 1.19
+  edition yet, because `ragekit dev` (Slint's C++ interpreter) can't select one in 1.19, and dev and
+  release builds must lay out the same.
+- **TypePHP 0.10.1** (was 0.9.5), with phpx 2.9.8. TypePHP 0.10 reserves the method names
+  `toStream`, `toBigInt`, `toBigFloat`, `toDecimal`, `toObject`, `toStdList` and `toStdDict`, and
+  `toInt`, `toFloat`, `toString`, `toBool` and `toArray` must have the keyword's signature (public,
+  no parameters, returning that type). An app class declaring one otherwise no longer compiles:
+  rename the method.
 - **Faster builds on Linux:** RageKit's own C++ (the bridge library, modules, the dev shell) is
   compiled one file at a time into object files, several at once (`RAGEKIT_JOBS`, default: the
-  number of CPUs), then linked. With `ccache` in front of `g++`, a rebuild reuses those objects.
+  number of CPUs), then linked. With `ccache` in front of `g++`, a rebuild reuses those objects:
+  a demo that took 26 s to build again takes 2 s.
 
-Not yet checked on Windows (the new Slint and TypePHP downloads for Windows are pinned and their
-checksums verified, but no build ran there).
+### Security
+
+- **TypePHP's build tools use symfony/filesystem and symfony/yaml 8.1.11** (were 8.1.9), which fix
+  a path escape and slow YAML parsing. TypePHP only reads your own project's files with them.
+
+### Known limits
+
+- Colour emoji inside text (`<Text>`, markdown) still come out monochrome on Linux: Slint picks a
+  regular font with monochrome emoji glyphs first (slint-ui/slint#15132). `<Emoji>` draws them in
+  colour.
 
 ## [0.8.1] - 2026-10-29
 
