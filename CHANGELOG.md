@@ -24,6 +24,9 @@ require the RageKit minor version they were written for, e.g. `"ragekit/ragekit"
   compiled one file at a time into object files, several at once (`RAGEKIT_JOBS`, default: the
   number of CPUs), then linked. With `ccache` in front of `g++`, a rebuild reuses those objects.
 
+Not yet checked on Windows (the new Slint and TypePHP downloads for Windows are pinned and their
+checksums verified, but no build ran there).
+
 ## [0.8.1] - 2026-10-29
 
 Layout fixes found while building the dev-null.sh client, and a whole redraw on Windows after a
