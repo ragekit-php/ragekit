@@ -106,6 +106,7 @@ checking them against the pins:
 | `SLINT_HOME` | Slint's C++ package (`include/`, `lib/`, `bin/slint-compiler`) |
 | `PHP_HOME` | Windows: PHP's import libraries and DLLs for normal builds with a TypePHP checkout. Linux: a PHP installation (`bin/php-config`, `lib/libphp.so`) for tpc to use as it is |
 | `RAGEKIT_LIBPHP` | Linux: the libphp normal builds link, or `none` for a private PHP (see [libphp](#linux-libphp-or-a-private-php)) |
+| `RAGEKIT_JOBS` | How many C++ files a build compiles at once (default: the number of CPUs) |
 
 ## ragekit doctor
 

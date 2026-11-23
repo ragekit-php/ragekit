@@ -209,7 +209,10 @@ final class ShellTest extends TestCase
         $build = $toolchain->compiler()->sharedLibrary(new CppBuild(
             'rk_module_demo', $dir, ["$root/tests/fixtures/modules/demo/native/demo.cc", "$dir/rk_module_demo_call.cc"], [$dir, "$root/native/include"], [], [], 'c++17',
         ));
-        self::assertSame(0, $toolchain->run($build->command, $dir), 'building the demo module');
+        @mkdir("$dir/rk_module_demo.objects");
+        foreach ($build->commands() as $command) {
+            self::assertSame(0, $toolchain->run($command, $dir), 'building the demo module');
+        }
         return $lib = $build->output;
     }
 

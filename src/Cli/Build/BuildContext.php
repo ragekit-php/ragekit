@@ -83,6 +83,38 @@ final class BuildContext
         return $code;
     }
 
+    /**
+     * Runs independent build tools (one compile per source) several at a time, like exec(). Returns
+     * the first failure's exit code with its output in $capturedOutput, or 0.
+     *
+     * @param list<list<string>> $commands
+     */
+    public function execAll(array $commands, string $cwd, string $status = ''): int
+    {
+        if ($this->output->isVerbose()) {
+            foreach ($commands as $command) {
+                $code = $this->toolchain->run($command, $cwd);
+                if ($code !== 0) {
+                    return $code;
+                }
+            }
+            return 0;
+        }
+        $tick = null;
+        if ($status !== '' && $this->status->enabled()) {
+            $this->status->show($status);
+            $tick = fn(int $seconds) => $this->status->show($status, $seconds);
+        }
+        $this->capturedOutput = '';
+        foreach ($this->toolchain->captureAll($commands, $cwd, $tick) as [$code, $output]) {
+            if ($code !== 0) {
+                $this->capturedOutput = $output;
+                return $code;
+            }
+        }
+        return 0;
+    }
+
     /** A path for display, relative to the app dir when inside it. */
     public function relative(string $path): string
     {

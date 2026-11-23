@@ -39,13 +39,27 @@ jobs:
           sudo add-apt-repository -y ppa:ondrej/php
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            build-essential git tar xvfb x11-utils \
+            build-essential ccache git tar xvfb x11-utils \
             libfontconfig1 libfreetype6 libxkbcommon0 libxkbcommon-x11-0 libinput10 libgbm1 libudev1 \
             libx11-xcb1 libxcursor1 libxi6 libxrandr2 libxtst6 imagemagick \
             php8.4-dev libphp8.4-embed cmake libgmp-dev libmpfr-dev \
             libcurl4-openssl-dev \
             fonts-noto-color-emoji libharfbuzz0b libsecret-1-0 gnome-keyring dbus openssh-client python3-gi gir1.2-glib-2.0 gir1.2-gtk-3.0 libglib2.0-bin xdg-utils \
             dpkg-dev fakeroot desktop-file-utils
+
+      # Every e2e test builds its app again (normal and Nano), mostly from the same C++: g++ goes
+      # through ccache, whose cache carries over from the previous run.
+      - name: ccache
+        run: |
+          echo "/usr/lib/ccache" >> "$GITHUB_PATH"
+          echo "CCACHE_DIR=$HOME/.cache/ccache" >> "$GITHUB_ENV"
+          echo "CCACHE_MAXSIZE=2G" >> "$GITHUB_ENV"
+
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ccache
+          key: ccache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: ccache-${{ runner.os }}-
 
       # The pinned toolchain (TypePHP + Slint) and the third-party code kits and modules fetch.
       - uses: actions/cache@v6
@@ -156,3 +170,7 @@ jobs:
         run: |
           DISPLAY=:99 tests/e2e/keyring.sh
           DISPLAY=:99 tests/e2e/keyring.sh --nano
+
+      - name: ccache statistics
+        if: always()
+        run: ccache --show-stats

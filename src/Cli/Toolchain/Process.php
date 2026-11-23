@@ -55,6 +55,67 @@ final class Process
     }
 
     /**
+     * Runs the commands, up to $jobs at a time, each with stdout + stderr collected. Stops starting
+     * new ones after one fails. Not on Windows (its pipes can't be polled): there they run one by one.
+     *
+     * @param list<list<string>>         $commands
+     * @param (callable(int): void)|null $tick
+     * @return list<array{int, string}> exit code and output of each command that ran, in order
+     */
+    public function captureAll(array $commands, string $cwd, int $jobs, ?callable $tick = null): array
+    {
+        if (Platform::isWindows() || $jobs <= 1) {
+            $results = [];
+            foreach ($commands as $command) {
+                $results[] = $result = $this->capture($command, $cwd, $tick);
+                if ($result[0] !== 0) {
+                    break;
+                }
+            }
+            return $results;
+        }
+        $results = [];
+        /** @var array<int, array{resource, resource}> $running index => process, its output pipe */
+        $running = [];
+        $output = [];
+        $next = 0;
+        $failed = false;
+        $start = hrtime(true);
+        $reported = 0;
+        while ((!$failed && $next < count($commands)) || $running !== []) {
+            while (!$failed && $next < count($commands) && count($running) < $jobs) {
+                $process = proc_open($this->resolve($commands[$next]), [0 => STDIN, 1 => ['pipe', 'w'], 2 => ['redirect', 1]], $pipes, $cwd, $this->env);
+                if (!is_resource($process)) {
+                    throw new RageKitException('could not start ' . $commands[$next][0]);
+                }
+                stream_set_blocking($pipes[1], false);
+                $running[$next] = [$process, $pipes[1]];
+                $output[$next] = '';
+                $next++;
+            }
+            $read = array_map(fn(array $entry) => $entry[1], array_values($running));
+            $none = null;
+            @stream_select($read, $none, $none, 0, 200_000);
+            foreach ($running as $index => [$process, $pipe]) {
+                $output[$index] .= (string) fread($pipe, 65536);
+                if (feof($pipe)) {
+                    fclose($pipe);
+                    $results[$index] = [proc_close($process), $output[$index]];
+                    $failed = $failed || $results[$index][0] !== 0;
+                    unset($running[$index]);
+                }
+            }
+            $seconds = intdiv(hrtime(true) - $start, 1_000_000_000);
+            if ($tick !== null && $seconds > $reported) {
+                $reported = $seconds;
+                $tick($seconds);
+            }
+        }
+        ksort($results);
+        return array_values($results);
+    }
+
+    /**
      * @param resource            $pipe
      * @param callable(int): void $tick
      */

@@ -129,4 +129,25 @@ final class Toolchain
     {
         return $this->process->capture($command, $cwd, $tick);
     }
+
+    /**
+     * @param list<list<string>>         $commands
+     * @param (callable(int): void)|null $tick
+     * @return list<array{int, string}>
+     */
+    public function captureAll(array $commands, string $cwd, ?callable $tick = null): array
+    {
+        return $this->process->captureAll($commands, $cwd, self::jobs(), $tick);
+    }
+
+    /** How many compilers run at once: RAGEKIT_JOBS, else the number of CPUs. */
+    public static function jobs(): int
+    {
+        $jobs = (int) getenv('RAGEKIT_JOBS');
+        if ($jobs > 0) {
+            return $jobs;
+        }
+        $cpus = Platform::isWindows() ? (int) getenv('NUMBER_OF_PROCESSORS') : (int) @shell_exec('nproc 2>/dev/null');
+        return max(1, $cpus);
+    }
 }

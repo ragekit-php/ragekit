@@ -23,13 +23,17 @@ final class NativeBuild
      */
     public static function ensure(BuildContext $context, CompileCommand $build, array $sources, string $status, string $failure): bool
     {
-        $stamp = self::stamp($build->command, $sources);
+        $stamp = self::stamp(array_merge(...$build->commands()), $sources);
         if (self::upToDate($build->output, $stamp)) {
             return false;
         }
         @mkdir(dirname($build->output), 0777, true);
         @unlink($build->output . '.cmd');
-        if ($context->exec($build->command, dirname($build->output), $status) !== 0) {
+        foreach ($build->compile as $command) {
+            @mkdir(dirname($command[array_key_last($command)]), 0777, true);
+        }
+        if ($context->execAll($build->compile, dirname($build->output), $status) !== 0
+            || $context->exec($build->command, dirname($build->output), $status) !== 0) {
             throw new RageKitException($failure . ($context->capturedOutput === '' ? '' : ":\n" . rtrim($context->capturedOutput)));
         }
         file_put_contents($build->output . '.cmd', $stamp);

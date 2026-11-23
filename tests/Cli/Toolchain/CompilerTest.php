@@ -22,9 +22,14 @@ final class CompilerTest extends TestCase
         $lib = (new Gcc())->sharedLibrary(self::build());
         self::assertSame('/b/libragekit_slint.so', $lib->output);
         self::assertSame('/b/libragekit_slint.so', $lib->link);
+        $a = '/b/ragekit_slint.objects/a-' . substr(sha1('/s/a.cc'), 0, 8) . '.o';
+        $glue = '/b/ragekit_slint.objects/glue-' . substr(sha1('/g/glue.cc'), 0, 8) . '.o';
         self::assertSame([
-            'g++', '-std=c++20', '-O2', '-shared', '-fPIC', '-fvisibility=hidden', '/s/a.cc', '/g/glue.cc',
-            '-I/s', '-I/g', '-L/slint/lib', '-lslint_cpp',
+            ['g++', '-std=c++20', '-O2', '-fPIC', '-fvisibility=hidden', '-I/s', '-I/g', '-c', '/s/a.cc', '-o', $a],
+            ['g++', '-std=c++20', '-O2', '-fPIC', '-fvisibility=hidden', '-I/s', '-I/g', '-c', '/g/glue.cc', '-o', $glue],
+        ], $lib->compile);
+        self::assertSame([
+            'g++', '-shared', $a, $glue, '-L/slint/lib', '-lslint_cpp',
             '-Wl,-rpath,$ORIGIN', '-Wl,-soname,libragekit_slint.so', '-o', '/b/libragekit_slint.so',
         ], $lib->command);
     }
@@ -33,7 +38,9 @@ final class CompilerTest extends TestCase
     {
         $program = (new Gcc())->program(new CppBuild('ragekit-devshell', '/b', ['/s/a.cc'], ['/s'], ['/slint/lib'], ['slint_cpp'], 'c++20', ['SLINT_FEATURE_EXPERIMENTAL']));
         self::assertSame('/b/ragekit-devshell', $program->output);
-        self::assertSame(['g++', '-std=c++20', '-O1', '-DSLINT_FEATURE_EXPERIMENTAL', '/s/a.cc', '-I/s', '-L/slint/lib', '-lslint_cpp', '-lpthread', '-Wl,-rpath,/slint/lib', '-o', '/b/ragekit-devshell'], $program->command);
+        $a = '/b/ragekit-devshell.objects/a-' . substr(sha1('/s/a.cc'), 0, 8) . '.o';
+        self::assertSame([['g++', '-std=c++20', '-O1', '-DSLINT_FEATURE_EXPERIMENTAL', '-I/s', '-c', '/s/a.cc', '-o', $a]], $program->compile);
+        self::assertSame(['g++', $a, '-L/slint/lib', '-lslint_cpp', '-lpthread', '-Wl,-rpath,/slint/lib', '-o', '/b/ragekit-devshell'], $program->command);
     }
 
     public function testMsvcSharedLibrary(): void

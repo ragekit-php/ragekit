@@ -57,4 +57,29 @@ final class ProcessTest extends TestCase
     {
         self::assertNull($this->find('nothing'));
     }
+
+    /** Three half-second commands, three at a time: well under the 1.5 s they take one by one. */
+    public function testCaptureAllRunsCommandsAtOnceAndKeepsTheirOrder(): void
+    {
+        $process = new Process(['PATH' => (string) getenv('PATH')]);
+        $start = hrtime(true);
+        $results = $process->captureAll([
+            ['sh', '-c', 'sleep 0.5; echo one'],
+            ['sh', '-c', 'sleep 0.5; echo two >&2'],
+            ['sh', '-c', 'sleep 0.5; echo three'],
+        ], $this->dir, 3);
+        self::assertLessThan(1.2, (hrtime(true) - $start) / 1e9);
+        self::assertSame([[0, "one\n"], [0, "two\n"], [0, "three\n"]], $results);
+    }
+
+    public function testCaptureAllStartsNothingAfterAFailure(): void
+    {
+        $process = new Process(['PATH' => (string) getenv('PATH')]);
+        $results = $process->captureAll([
+            ['sh', '-c', 'echo broken; exit 3'],
+            ['sh', '-c', "touch ran"],
+        ], $this->dir, 1);
+        self::assertSame([[3, "broken\n"]], $results);
+        self::assertFileDoesNotExist("$this->dir/ran");
+    }
 }

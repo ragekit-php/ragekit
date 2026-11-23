@@ -20,6 +20,9 @@ require the RageKit minor version they were written for, e.g. `"ragekit/ragekit"
   `toStdDict`, and `toInt`, `toFloat`, `toString`, `toBool` and `toArray` must have the keyword's
   signature (public, no parameters, returning that type). An app class declaring one otherwise no
   longer compiles: rename the method.
+- **Faster builds on Linux:** RageKit's own C++ (the bridge library, modules, the dev shell) is
+  compiled one file at a time into object files, several at once (`RAGEKIT_JOBS`, default: the
+  number of CPUs), then linked. With `ccache` in front of `g++`, a rebuild reuses those objects.
 
 ## [0.8.1] - 2026-10-29
 
