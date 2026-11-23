@@ -15,6 +15,11 @@ require the RageKit minor version they were written for, e.g. `"ragekit/ragekit"
 
 - **Slint 1.19.0** (was 1.18.1): run `ragekit setup` once. Templates behave as before: RageKit
   doesn't opt into Slint's 1.19 edition yet, so its layout changes don't apply.
+- **TypePHP 0.10.1** (was 0.9.5), with phpx 2.9.8: run `ragekit setup` once. TypePHP 0.10 reserves
+  the method names `toStream`, `toBigInt`, `toBigFloat`, `toDecimal`, `toObject`, `toStdList` and
+  `toStdDict`, and `toInt`, `toFloat`, `toString`, `toBool` and `toArray` must have the keyword's
+  signature (public, no parameters, returning that type). An app class declaring one otherwise no
+  longer compiles: rename the method.
 
 ## [0.8.1] - 2026-10-29
 

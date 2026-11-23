@@ -9,9 +9,9 @@
 
 typephp:
   # TypePHP compiles the app's PHP. A source checkout (bin/tpc.php on PHP 8.4+), because our
-  # patches change its sources. 5ba93766 = v0.9.5, the version RageKit is tested with.
+  # patches change its sources. c5599c5c = v0.10.1, the version RageKit is tested with.
   git: https://github.com/swoole/typephp.git
-  commit: 5ba9376642d8dd75efcd002b41b09a9d6bcca3e2
+  commit: c5599c5c9e8597e7124dd79db94739cabe39c526
   composer-lock: typephp/composer.lock
   patches:
     # php-nano doesn't count Core as started: every Nano app using a Core function (strlen, …)
@@ -25,9 +25,9 @@ typephp:
         # (crc32_x86.c isn't built), no ReflectionFiber methods (no fibers). To be reported upstream.
         - typephp/patches/php-nano-windows-msvc.patch
       downloads:
-        # PHP's import libraries and DLLs for normal builds (PHP_HOME): TypePHP's v0.9.5 release.
-        - url: https://github.com/swoole/typephp/releases/download/v0.9.5/tpc_v0.9.5_windows_x64_php8.5.11-zts.zip
-          sha256: 48762306c17449733af770ef501b185c5679bf8623c2794c9c7b435749633355
+        # PHP's import libraries and DLLs for normal builds (PHP_HOME): TypePHP's v0.10.1 release.
+        - url: https://github.com/swoole/typephp/releases/download/v0.10.1/tpc_v0.10.1_windows_x64_php8.5.12-zts.zip
+          sha256: 6dadc7caab3005868428c071494c0a06b6458e2d4dd2f81611b0aafadfb47cef
           to: release
           strip: 1
 

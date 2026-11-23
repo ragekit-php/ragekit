@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ecdba6c83c0d4c576f6a1d351fa41919",
+    "content-hash": "a672311d1a7e654624c95f4d57eb6d2b",
     "packages": [
         {
             "name": "ajaxray/ansikit",
@@ -341,16 +341,16 @@
         },
         {
             "name": "swoole/phpx",
-            "version": "v2.9.4",
+            "version": "v2.9.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swoole/phpx.git",
-                "reference": "f6a2555e14694e8888d2f40ff2838ffb22bc04f2"
+                "reference": "90e6d22a9c3f4d5dbd2c75d62e90bf5adfe58c89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swoole/phpx/zipball/f6a2555e14694e8888d2f40ff2838ffb22bc04f2",
-                "reference": "f6a2555e14694e8888d2f40ff2838ffb22bc04f2",
+                "url": "https://api.github.com/repos/swoole/phpx/zipball/90e6d22a9c3f4d5dbd2c75d62e90bf5adfe58c89",
+                "reference": "90e6d22a9c3f4d5dbd2c75d62e90bf5adfe58c89",
                 "shasum": ""
             },
             "require": {
@@ -381,6 +381,7 @@
                         "src/core/decimal_nano.cc",
                         "src/core/debug.cc",
                         "src/core/foreach_iterator.cc",
+                        "src/core/keyword_method.cc",
                         "src/core/native_gc.cc",
                         "src/core/object.cc",
                         "src/core/scope.cc",
@@ -500,9 +501,9 @@
             ],
             "support": {
                 "issues": "https://github.com/swoole/phpx/issues",
-                "source": "https://github.com/swoole/phpx/tree/v2.9.4"
+                "source": "https://github.com/swoole/phpx/tree/v2.9.8"
             },
-            "time": "2026-10-13T05:06:53+00:00"
+            "time": "2026-11-13T07:53:47+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
