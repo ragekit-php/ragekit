@@ -73,7 +73,7 @@ final class TrayTest extends TestCase
         }
         $dir = sys_get_temp_dir() . '/rk-tray-' . uniqid();
         mkdir("$dir/icons", 0777, true);
-        copy(self::ROOT . '/tests/e2e/images/assets/red.png', "$dir/icons/app-tray.png");
+        copy(self::ROOT . '/tests/fixtures/images/red.png', "$dir/icons/app-tray.png");
         [$lib, $probe] = $this->build($dir);
         exec('env -i PATH=/usr/bin:/bin HOME=' . escapeshellarg($dir) . ' timeout 60 dbus-run-session -- sh '
             . escapeshellarg(self::ROOT . '/tests/fixtures/tray/drive.sh') . ' ' . implode(' ', array_map('escapeshellarg', [$probe, $lib, "$dir/icons/app-tray.png", $dir]))

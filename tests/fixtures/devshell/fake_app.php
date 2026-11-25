@@ -64,7 +64,7 @@ if ($mode === 'framed') {
 }
 if ($mode === 'rows') {
     // Page 2 (W): a collection (p3: name, image, level) and a list shown as images (p5; p4 is the list itself).
-    $png = dirname(__DIR__, 3) . '/tests/e2e/images/assets/red.png';
+    $png = dirname(__DIR__, 3) . '/tests/fixtures/images/red.png';
     $shell->send('set-int', $reply[1], 'rk-page', '2');
     $shell->send('set-rows', $reply[1], 'p3', 'struct', '2', '3', 's', 'img', 'f', 'a', $png, '0.5', 'b', '', '1');
     $shell->send('set-rows', $reply[1], 'p3', 'struct', '1', '3', 's', 'img', 'f', 'a2', $png, '0.25');

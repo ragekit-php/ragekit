@@ -43,7 +43,7 @@ jobs:
             libfontconfig1 libfreetype6 libxkbcommon0 libxkbcommon-x11-0 libinput10 libgbm1 libudev1 \
             libx11-xcb1 libxcursor1 libxi6 libxrandr2 libxtst6 imagemagick \
             php8.4-dev libphp8.4-embed cmake libgmp-dev libmpfr-dev \
-            libcurl4-openssl-dev \
+            libcurl4-openssl-dev libopus0 \
             fonts-noto-color-emoji libharfbuzz0b libsecret-1-0 gnome-keyring dbus openssh-client python3-gi gir1.2-glib-2.0 gir1.2-gtk-3.0 libglib2.0-bin xdg-utils \
             dpkg-dev fakeroot desktop-file-utils
 
