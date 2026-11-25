@@ -56,11 +56,22 @@ final class NativeBuild
             }
         }
         ksort($inputs);
-        $lines = $command;
+        $lines = [self::toolchain(), ...$command];
         foreach ($inputs as $file => $hash) {
             $lines[] = "$hash $file";
         }
         return implode("\n", $lines) . "\n";
+    }
+
+    /**
+     * The toolchain the C++ is built against: RageKit's pins (Slint's headers and library come with
+     * them) and the folders that override them. Any change rebuilds every native library once: a
+     * library built against another Slint may not run with the new one.
+     */
+    private static function toolchain(): string
+    {
+        $pins = dirname(__DIR__, 3) . '/toolchain/toolchain.yml';
+        return 'toolchain ' . (is_file($pins) ? sha1_file($pins) : '-') . ' ' . (getenv('SLINT_HOME') ?: '-') . ' ' . (getenv('TYPEPHP_HOME') ?: '-');
     }
 
     /** @param string $stamp what the output must have been built from (see stamp()) */

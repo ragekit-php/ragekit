@@ -38,12 +38,13 @@ final class SlintViewGenerator implements ViewGenerator
         foreach ($compiled->libraries as $path) {
             $inputs[] = $path;
         }
-        if (!self::needsCompile("$out/app.h", "$out/app.slint", $inputs, $compiled->images)) {
-            return $this->result($project, $compiled, $binder, true);
-        }
         $compiler = $context->backend->views['slint-compiler'] ?? throw new RageKitException('backend.yml: views: slint-compiler is not set');
         if (!is_file($compiler)) {
             throw new RageKitException("slint-compiler not found at $compiler (run `ragekit setup`, or set SLINT_HOME)");
+        }
+        $stamp = self::compilerStamp($compiler);
+        if (!self::needsCompile("$out/app.h", "$out/app.slint", $inputs, $compiled->images, $stamp)) {
+            return $this->result($project, $compiled, $binder, true);
         }
         $command = [$compiler, "$out/app.slint", '-f', 'cpp', '--embed-resources=embed-files', '-o', "$out/app.h"];
         foreach ($compiled->libraries as $name => $path) {
@@ -57,6 +58,7 @@ final class SlintViewGenerator implements ViewGenerator
             $context->capturedOutput = self::shortened($context->capturedOutput);
             throw new RageKitException('slint-compiler rejected the generated build/' . $context->backend->name . '/generated/app.slint' . $hint);
         }
+        GeneratedFile::write("$out/app.h.compiler", $stamp);
 
         return $this->result($project, $compiled, $binder, false);
     }
@@ -92,12 +94,19 @@ final class SlintViewGenerator implements ViewGenerator
      * slint-compiler has to run when app.h is missing or older than app.slint or than any input:
      * a kit/library .slint file, or any .slint file below the folder of one (they import each other).
      *
-     * @param list<string> $inputs kit entry files and libraries (their folders are scanned for .slint)
-     * @param list<string> $files  single files compared on their own, e.g. embedded images
+     * It also has to run when another slint-compiler made app.h (a Slint update): the Slint library
+     * refuses a header from another version.
+     *
+     * @param list<string> $inputs   kit entry files and libraries (their folders are scanned for .slint)
+     * @param list<string> $files    single files compared on their own, e.g. embedded images
+     * @param ?string      $compiler compilerStamp() of the slint-compiler in use; null: not compared
      */
-    public static function needsCompile(string $appHeader, string $appSlint, array $inputs, array $files = []): bool
+    public static function needsCompile(string $appHeader, string $appSlint, array $inputs, array $files = [], ?string $compiler = null): bool
     {
         if (!is_file($appHeader)) {
+            return true;
+        }
+        if ($compiler !== null && @file_get_contents("$appHeader.compiler") !== $compiler) {
             return true;
         }
         clearstatcache();
@@ -121,6 +130,13 @@ final class SlintViewGenerator implements ViewGenerator
             }
         }
         return false;
+    }
+
+    /** Which slint-compiler this is: its path, size and modification time (a Slint update changes them). */
+    public static function compilerStamp(string $compiler): string
+    {
+        clearstatcache();
+        return (realpath($compiler) ?: $compiler) . ' ' . filesize($compiler) . ' ' . filemtime($compiler) . "\n";
     }
 
     private function result(ViewProject $project, CompiledViews $compiled, string $binder, bool $cached): ViewResult

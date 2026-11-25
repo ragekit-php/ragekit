@@ -11,6 +11,18 @@ require the RageKit minor version they were written for, e.g. `"ragekit/ragekit"
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-11-25
+
+A fix for updating to 0.9.1. To update: `composer require ragekit/ragekit:^0.9`. No app changes.
+
+### Fixed
+
+- **An app's existing `build/` works after a Slint update.** After `ragekit setup` installed
+  Slint 1.19.1, a build folder made with 1.19.0 failed to compile (`generated with Slint compiler
+  version 1.19.0 … must match exactly`) until it was deleted, because the generated views only
+  counted as stale when a template changed. They are now also regenerated when the Slint compiler
+  changes, and RageKit's native libraries rebuild once after a toolchain change.
+
 ## [0.9.1] - 2026-11-25
 
 Fixes, most of them found while building a larger app. To update:

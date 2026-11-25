@@ -52,6 +52,31 @@ final class GeneratedFileTest extends TestCase
         }
     }
 
+    public function testAnotherSlintCompilerRegeneratesTheHeader(): void
+    {
+        $dir = sys_get_temp_dir() . '/rk-slint-' . uniqid();
+        mkdir($dir);
+        $header = "$dir/app.h";
+        $slint = "$dir/app.slint";
+        $compiler = "$dir/slint-compiler";
+        touch($slint, 1000);
+        file_put_contents($compiler, 'compiler 1.19.0');
+        touch($header, 2000);
+        try {
+            $old = SlintViewGenerator::compilerStamp($compiler);
+            self::assertTrue(SlintViewGenerator::needsCompile($header, $slint, [], [], $old), 'header from before stamps (an update from 0.9.0)');
+            file_put_contents("$header.compiler", $old);
+            self::assertFalse(SlintViewGenerator::needsCompile($header, $slint, [], [], $old), 'same compiler');
+            file_put_contents($compiler, 'compiler 1.19.1, a little longer');
+            self::assertTrue(SlintViewGenerator::needsCompile($header, $slint, [], [], SlintViewGenerator::compilerStamp($compiler)), 'Slint updated');
+        } finally {
+            foreach ([$header, "$header.compiler", $slint, $compiler] as $file) {
+                @unlink($file);
+            }
+            @rmdir($dir);
+        }
+    }
+
     public function testSlintCompilerRunsOnlyWhenNeeded(): void
     {
         $dir = sys_get_temp_dir() . '/rk-slint-' . uniqid();
