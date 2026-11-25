@@ -4,6 +4,7 @@
 #
 #   DISPLAY=:99 tests/e2e/demos.sh            # normal builds
 #   DISPLAY=:99 tests/e2e/demos.sh --nano     # Nano builds (extra arguments go to ragekit build)
+#   DEMOS="kitchen-sink player" DISPLAY=:99 tests/e2e/demos.sh --nano   # only those demos
 set -uo pipefail
 
 root=$(cd "$(dirname "$0")/../.." && pwd)
@@ -13,6 +14,9 @@ failed=0
 
 for dir in "$root"/demo/*/; do
     demo=$(basename "$dir")
+    if [ -n "${DEMOS:-}" ] && [[ " $DEMOS " != *" $demo "* ]]; then
+        continue
+    fi
     echo "== $demo: ragekit build $*"
     if ! (cd "$dir" && "$root/bin/ragekit" build "$@"); then
         echo "!! $demo: build failed"

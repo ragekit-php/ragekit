@@ -1,8 +1,20 @@
 # End-to-end checks (Linux, no desktop needed)
 
-`tests/e2e/demos.sh` builds every demo, opens it and closes it (CI runs it with `--nano`):
+`tests/e2e/all.sh` runs every check CI runs, several at once, each on its own Xvfb display (`:100`
+and up), and prints the end of the log of each one that failed. With ccache installed it puts
+`/usr/lib/ccache` first on PATH, so a second run reuses most of the compiled C++. A new check goes
+into its list.
+
+    tests/e2e/all.sh                          # 4 at once (RAGEKIT_E2E_JOBS): ~10 min on 8 cores, without ccache
+    tests/e2e/all.sh -j 2 scroll tray         # only the checks whose name has one of the words
+
+Each script below also runs on its own, on any display.
+
+`tests/e2e/demos.sh` builds every demo, opens it and closes it (CI: normal builds, and kitchen sink
+also with `--nano`):
 
     DISPLAY=:99 tests/e2e/demos.sh            # extra arguments go to ragekit build, e.g. --nano
+    DEMOS=kitchen-sink DISPLAY=:99 tests/e2e/demos.sh --nano   # only that demo
 
 `tests/e2e/kitchen-sink.sh` opens every section and tab of `demo/kitchen-sink` and checks the window keeps its
 size (an element that caps a column's width shrinks the window); `--kit=material` for the other kit.
