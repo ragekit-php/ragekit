@@ -303,7 +303,7 @@ repository. This is how the Material kit gets Slint's Material library:
 ```yaml
 fetch:
   - git: https://github.com/slint-ui/slint.git
-    ref: v1.19.0
+    ref: v1.19.1
     commit: e436f546f71481d786cbc2a74316b1be1ef678c1   # what the tag must point to
     path: ui-libraries/material/src                    # only this folder is kept
     to: library

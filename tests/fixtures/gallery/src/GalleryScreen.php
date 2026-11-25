@@ -14,7 +14,12 @@ final class GalleryScreen extends Screen
     {
         $this->posts = new Posts();
         $this->posts->add(new Post('First', ['red'], [App::resolve('assets/red.png')]));
+        $this->posts->add(new Post('Gone', [], []));
         $this->posts->add(new Post('Second', [], []));
+        $this->posts->add(new Post('Gone too', [], []));
+        // Collection's own code on a subclass, compiled (it once threw there, not in plain PHP).
+        $this->posts->remove(1);
+        unset($this->posts[2]);
     }
 
     public static function template(): string

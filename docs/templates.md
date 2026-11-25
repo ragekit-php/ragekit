@@ -444,6 +444,11 @@ final class DevicesScreen extends Screen
 
 ## Layout
 
+One rule shapes most layouts: **a one-line `<Label>`'s text is its minimum width**, and minimum widths
+add up to the window's. A long hostname or error message in a row widens its card and then the
+window. Give such rows a width (and cut long strings in PHP), or use a wrapping `<Text>`. See
+[Layout limits](#layout-limits).
+
 ### VStack and HStack
 
 `<VStack>` places its children top to bottom, `<HStack>` left to right.
@@ -616,7 +621,8 @@ public function received(Message $message): void
 | `padded` | `false` removes the 8 px gap between children. |
 | `grow` | `false` stops it taking the leftover room; give it a `height` style instead. |
 
-It takes box styles (`backgroundColor`, `borderRadius`, `padding`, a fixed `height`, …). Tested
+It takes the same styles as `VStack`/`HStack` (size, margin, flex, `padding`, `gap`, a fixed
+`height`, …). For a background, a border or rounded corners, put it inside a `<View>`. Tested
 inside `VStack`/`HStack`; inside a `<View>`, give it a `height` style. `keys="true"`: Page Up and
 Page Down scroll it by most of a view, even while an input (a chat's composer) has the focus (give
 it to one list per screen). Not yet: horizontal scrolling.
@@ -943,6 +949,9 @@ Templates are XML, so `&` and `<` in plain attribute text are written `&amp;` an
 | `source="assets/logo.svg"` | that file, embedded into the app at build time (a missing file is a build error) |
 | `source="{{ $assets->images->logo }}"` | an image the app registered (below), embedded |
 | `source="{{ $cover }}"`, `{{ cover() }}`, `{{ $store->user->avatar }}` | whatever that string holds, while the app runs |
+
+Ship images at the size you show them (and at twice that for HiDPI screens): the software renderer
+scales without smoothing, so a large picture shown much smaller looks jagged. SVGs scale cleanly.
 
 **Registered images.** List the images your app ships in a class of constants (paths relative to
 the project; `ragekit make:assets Images` creates one) and register it in your App:

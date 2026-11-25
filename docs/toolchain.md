@@ -117,12 +117,13 @@ vendor/bin/ragekit doctor
 ```
   ✓ PHP           8.4.28 (/usr/bin/php8.4)
   ✓ TypePHP       c5599c5c + 1 patch (~/.local/share/ragekit/toolchains/270ccbcac5ec/typephp)
-  ✓ Slint         1.19.0 (~/.local/share/ragekit/toolchains/270ccbcac5ec/slint)
+  ✓ Slint         1.19.1 (~/.local/share/ragekit/toolchains/270ccbcac5ec/slint)
   ✓ C++ compiler  g++ (Debian 14.2.0-19) 14.2.0
   ✓ git           /usr/bin/git
   ✓ Composer      /usr/local/bin/composer
   ✓ tar           /usr/bin/tar
   ✓ libphp        /usr/lib/libphp8.4.so: normal builds link it
+  ✓ X11 libraries  found (apps open their windows through them, also under XWayland and WSLg)
   ✓ Project       …/myapp/project.yml
 ragekit: ready to build
 ```

@@ -15,6 +15,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <cstdio>
 #include <cstdlib>
 #include <functional>
 #include <map>
@@ -171,8 +172,34 @@ RK_API void rk_set_renderer(const char *renderer)
 #endif
 }
 
+#if !defined(_WIN32) && !defined(__APPLE__)
+// Without a display winit panics with a long Rust message; say what's wrong in one line instead.
+// Only for winit (the default): SLINT_BACKEND=testing or linuxkms need no display.
+static void requireDisplay()
+{
+    auto set = [](const char *name) {
+        const char *value = std::getenv(name);
+        return value != nullptr && *value != '\0';
+    };
+    const char *backend = std::getenv("SLINT_BACKEND");
+    bool winit = backend == nullptr || *backend == '\0' || std::string_view(backend).starts_with("winit");
+    if (!winit || set("DISPLAY") || set("WAYLAND_DISPLAY") || set("WAYLAND_SOCKET")) {
+        return;
+    }
+    std::fputs("ragekit: no display to open a window on (DISPLAY and WAYLAND_DISPLAY are not set). "
+               "Start the app from a desktop session, or over SSH with ssh -X.\n",
+               stderr);
+    std::exit(1);
+}
+#endif
+
 RK_API int64_t rk_open(const char *screen, size_t screen_len, const char *title, size_t title_len, int32_t width, int32_t height)
 {
+#if !defined(_WIN32) && !defined(__APPLE__)
+    if (windows.empty()) {
+        requireDisplay();
+    }
+#endif
     int64_t id = nextWindow;
     auto instance = rk::create_instance(std::string_view(screen, screen_len), id);
     if (!instance) {

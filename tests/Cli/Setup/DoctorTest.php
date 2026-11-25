@@ -81,4 +81,19 @@ final class DoctorTest extends TestCase
         self::assertSame(Check::FAIL, $check->status); // no slint-compiler there
         self::assertStringContainsString('SLINT_HOME', $check->detail);
     }
+
+    public function testMissingX11LibrariesNameTheirPackages(): void
+    {
+        mkdir("$this->dir/lib");
+        foreach (array_keys(Doctor::DISPLAY_LIBRARIES) as $library) {
+            touch("$this->dir/lib/$library");
+        }
+        self::assertSame(Check::OK, Doctor::displayLibrariesCheck(["$this->dir/none", "$this->dir/lib"])->status);
+
+        unlink("$this->dir/lib/libX11-xcb.so.1");
+        unlink("$this->dir/lib/libxkbcommon-x11.so.0");
+        $check = Doctor::displayLibrariesCheck(["$this->dir/lib"]);
+        self::assertSame(Check::WARN, $check->status);
+        self::assertStringContainsString('install libx11-xcb1 libxkbcommon-x11-0', $check->detail);
+    }
 }

@@ -32,6 +32,10 @@ final class AlbumsScreen extends Screen implements GalleryContext
 | `canGoBack()` | whether there's a screen to go back to |
 | `top()`, `depth()` | the screen shown, how many are on the stack |
 
+`replace()` swaps only the top screen: the screens under it stay. For a sidebar that switches
+between sections, use `reset()`. With `replace()`, once a section has pushed a page, Back (and
+Alt+Left) would go to the screen under it, which may belong to another section.
+
 The navigator exists once the screen is shown in a window: calling `navigator()` in a constructor
 throws ("no window yet").
 

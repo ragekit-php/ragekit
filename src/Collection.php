@@ -55,7 +55,9 @@ abstract class Collection implements \IteratorAggregate, \Countable, \ArrayAcces
     public function remove(int $index): void
     {
         $this->range($index);
-        array_splice($this->items, $index, 1);
+        // Not array_splice($this->items, …): TypePHP 0.10 can't pass a parent's private property
+        // by reference from the parent's method when $this is a subclass (every collection is).
+        $this->items = array_merge(array_slice($this->items, 0, $index), array_slice($this->items, $index + 1));
     }
 
     public function clear(): void

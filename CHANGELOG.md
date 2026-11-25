@@ -11,6 +11,39 @@ require the RageKit minor version they were written for, e.g. `"ragekit/ragekit"
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-25
+
+Fixes, most of them found while building a larger app. To update:
+`composer require ragekit/ragekit:^0.9`, then `ragekit setup` once for Slint 1.19.1. No app changes.
+
+### Fixed
+
+- **`Collection::remove()` and `unset($collection[$i])` work in compiled apps.** They threw
+  (`array_splice(): Argument #1 ($array) must be of type array, null given`), or crashed a Nano
+  build, though plain PHP (`ragekit dev`, tests) was fine. A TypePHP 0.10 bug with a parent class's
+  private property passed by reference; `Collection` no longer does that. The gallery e2e test now
+  removes from a collection in normal and Nano builds.
+- **An app started without a display** (over SSH, for example) prints one line saying so
+  (`ragekit: no display to open a window on …`) and exits with 1, instead of a panic from winit.
+
+### Changed
+
+- **Slint 1.19.1** (was 1.19.0): a ListView keeps its rows in place while its scroll position
+  doesn't change and no longer lays out in a loop when scrolling to a row; a window keeps its size
+  when the display scale changes after a resize; SVG images with `image-fit: cover` draw correctly
+  in the software renderer.
+- **`ragekit doctor` checks for the X11 client libraries** apps need to open a window (also under
+  XWayland and WSLg), and names the Debian/Ubuntu packages if one is missing, as on a minimal WSL.
+
+### Documentation
+
+- ScrollView takes the same styles as `VStack`/`HStack`; the docs said it took backgrounds and
+  corners, which the compiler rejects (put it inside a `<View>` for those).
+- The layout docs start with the rule behind most surprises: a one-line Label's text is its
+  minimum width.
+- Navigation: use `reset()`, not `replace()`, for a sidebar that switches sections.
+- Images: ship them at the size you show them; the software renderer scales without smoothing.
+
 ## [0.9.0] - 2026-11-23
 
 Updated dependencies and faster builds: Slint 1.19.0, TypePHP 0.10.1, and RageKit's own C++

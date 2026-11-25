@@ -29,6 +29,7 @@ final class Doctor
             $this->compiler(),
             ...$this->setupTools(),
             ...$this->hostPhp(),
+            ...$this->displayLibraries(),
             $this->project(),
         ];
     }
@@ -115,6 +116,47 @@ final class Doctor
         }
         $missing = implode(' ', HostPhp::missing(getenv()));
         return [new Check(Check::WARN, 'libphp', "not usable: the first normal build compiles PHP once (~10 min, ~/.typephp). To skip that, install $missing (Debian/Ubuntu). Nano builds don't need it")];
+    }
+
+    /** The X11 client libraries Slint's winit loads at run time, by Debian/Ubuntu package. */
+    public const DISPLAY_LIBRARIES = [
+        'libX11.so.6' => 'libx11-6',
+        'libX11-xcb.so.1' => 'libx11-xcb1',
+        'libXcursor.so.1' => 'libxcursor1',
+        'libXrandr.so.2' => 'libxrandr2',
+        'libXi.so.6' => 'libxi6',
+        'libxkbcommon-x11.so.0' => 'libxkbcommon-x11-0',
+    ];
+
+    /** @return list<Check> */
+    private function displayLibraries(): array
+    {
+        if (Platform::isWindows() || PHP_OS_FAMILY === 'Darwin') {
+            return [];
+        }
+        $dirs = ['/usr/lib/x86_64-linux-gnu', '/lib/x86_64-linux-gnu', '/usr/lib/aarch64-linux-gnu', '/usr/lib64', '/usr/lib', '/lib64', '/lib'];
+        return [self::displayLibrariesCheck($dirs)];
+    }
+
+    /** @param list<string> $dirs where to look for the libraries */
+    public static function displayLibrariesCheck(array $dirs): Check
+    {
+        $missing = [];
+        foreach (self::DISPLAY_LIBRARIES as $library => $package) {
+            $found = false;
+            foreach ($dirs as $dir) {
+                if (is_file("$dir/$library")) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $missing[] = $package;
+            }
+        }
+        return $missing === []
+            ? new Check(Check::OK, 'X11 libraries', 'found (apps open their windows through them, also under XWayland and WSLg)')
+            : new Check(Check::WARN, 'X11 libraries', 'missing, so apps can\'t open a window here (building works): install ' . implode(' ', $missing) . ' (Debian/Ubuntu; a minimal WSL lacks them)');
     }
 
     private function project(): Check

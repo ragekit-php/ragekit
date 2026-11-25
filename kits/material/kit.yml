@@ -5,8 +5,8 @@ entry: rk-material.slint
 # Slint's Material library (MIT), at the Slint version RageKit uses; fetched into library/.
 fetch:
   - git: https://github.com/slint-ui/slint.git
-    ref: v1.19.0
-    commit: e436f546f71481d786cbc2a74316b1be1ef678c1
+    ref: v1.19.1
+    commit: 5d235f5fbf237c74d18c1c6af4dd1821fe46acd0
     path: ui-libraries/material/src
     to: library
   # A monospace font for <Text variant="code"> (SIL Open Font License 1.1): Slint 1.18 doesn't

@@ -33,19 +33,19 @@ typephp:
 
 slint:
   # Slint's prebuilt C++ package and its compiler (Royalty-free / GPLv3 / commercial, see LICENSE).
-  version: 1.19.0
+  version: 1.19.1
   platforms:
     linux-x86_64:
       downloads:
-        - url: https://github.com/slint-ui/slint/releases/download/v1.19.0/Slint-cpp-1.19.0-Linux-x86_64.tar.gz
-          sha256: 8637927d05b90ab4c52c283490c0293d9d28ad3746c09fefead8da40170216b7
+        - url: https://github.com/slint-ui/slint/releases/download/v1.19.1/Slint-cpp-1.19.1-Linux-x86_64.tar.gz
+          sha256: fd79df65ab912a27a8877fe1a7d1142f6569d92ac3aa8a35d1e67dfb647d9222
           strip: 1
-        - url: https://github.com/slint-ui/slint/releases/download/v1.19.0/slint-compiler-Linux-x86_64.tar.gz
-          sha256: 40f50891de8b78c59cd04158c4f55d3f9ee45f8908aacc22192d76ffc0b7693a
+        - url: https://github.com/slint-ui/slint/releases/download/v1.19.1/slint-compiler-Linux-x86_64.tar.gz
+          sha256: f143b592e7806bae90e79bfd5ac7e2e46d35e377609ebc619cc12d627d911f95
           to: bin
     windows-x86_64:
       downloads:
         # An installer (NSIS) holding bin/ (with slint-compiler.exe), include/ and lib/: unpacked
         # with 7-Zip, not run.
-        - url: https://github.com/slint-ui/slint/releases/download/v1.19.0/Slint-cpp-1.19.0-win64-MSVC-AMD64.exe
-          sha256: 4feb1d631e00bda7c40a09fb833c45e076d1d1bae08bd191f2e0832faac47b81
+        - url: https://github.com/slint-ui/slint/releases/download/v1.19.1/Slint-cpp-1.19.1-win64-MSVC-AMD64.exe
+          sha256: 0f859dad80517120094cce5acace65c4cace24bd25329f29806ad1d8c561a4be
