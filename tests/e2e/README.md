@@ -5,7 +5,7 @@ and up), and prints the end of the log of each one that failed. With ccache inst
 `/usr/lib/ccache` first on PATH, so a second run reuses most of the compiled C++. A new check goes
 into its list.
 
-    tests/e2e/all.sh                          # 4 at once (RAGEKIT_E2E_JOBS): ~10 min on 8 cores, without ccache
+    tests/e2e/all.sh                          # 4 at once (RAGEKIT_E2E_JOBS): ~10 min on 8 cores with ccache
     tests/e2e/all.sh -j 2 scroll tray         # only the checks whose name has one of the words
 
 Each script below also runs on its own, on any display.
